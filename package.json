@@ -19,8 +19,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.cjs",
-    "start": "node server.cjs"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "^5.2.1"

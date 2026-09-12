@@ -1,8 +1,11 @@
-const express = require('express');
-const path = require('path');
+import express from 'express';
+import path from 'path';
+
+import indexRouter from './src/routes/index.js';
+import connectFourRouter from './src/routes/connect-four.js';
 
 const PORT = process.env.PORT || 3000;
-const SOURCE_PATH = path.join(__dirname, 'src');
+const SOURCE_PATH = path.join(import.meta.dirname, 'src');
 const PUBLIC_PATH = path.join(SOURCE_PATH, 'public');
 const VIEWS_PATH = path.join(SOURCE_PATH, 'views');
 
@@ -12,11 +15,12 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(VIEWS_PATH))
 
 if (process.env.NODE_ENV !== 'production') {
-  const livereload = require('livereload');
-  const connectLiveReload = require('connect-livereload');
+  const { default: livereload } = await import('livereload');
+  const { default: connectLiveReload } = await import('connect-livereload');
 
   const liveReloadServer = livereload.createServer({
-    exts: ['html', 'css', 'js', 'ejs']
+    exts: ['html', 'css', 'js', 'ejs'],
+    delay: 300,
   });
 
   liveReloadServer.watch([
@@ -34,10 +38,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use(express.static(PUBLIC_PATH));
+app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (request, response) => {
-  response.render('index', { message: 'Hello, world!' });
-})
+app.use('/', indexRouter);
+app.use('/connect-four', connectFourRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
